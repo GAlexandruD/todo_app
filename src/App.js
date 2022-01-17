@@ -6,22 +6,16 @@ import Todo from "./Todo";
 import db from "./firebase";
 import {
   collection,
-  getDocs,
   addDoc,
-  doc,
   onSnapshot,
-  where,
   query,
   orderBy,
-  setDoc,
   serverTimestamp,
 } from "firebase/firestore";
 
 function App() {
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState("");
-
-  //I want to read all the todos in the database and add them to the initial state.
 
   useEffect(() => {
     onSnapshot(
@@ -36,19 +30,23 @@ function App() {
 
   const addTodo = (event) => {
     event.preventDefault();
-    const addToDotoDB = async () => {
-      await addDoc(collection(db, "todos"), {
-        todo: input,
-        timestamp: serverTimestamp(),
-      });
+    const addToDoToDB = async () => {
+      try {
+        await addDoc(collection(db, "todos"), {
+          todo: input,
+          timestamp: serverTimestamp(),
+        });
+      } catch (e) {
+        console.error(e);
+      }
     };
-    addToDotoDB();
+    addToDoToDB();
     setInput("");
   };
 
   return (
     <div className="App">
-      <h1>It works! 🇷🇴</h1>
+      <h1>ToDo List 🇷🇴</h1>
       <form>
         <FormControl>
           <InputLabel>Write a ToDo</InputLabel>
@@ -70,7 +68,7 @@ function App() {
 
       <ul>
         {todos.map((todo, i) => (
-          <Todo todo={todo} key={i} />
+          <Todo todo={todo} key={i} line={i + 1} />
         ))}
       </ul>
     </div>
